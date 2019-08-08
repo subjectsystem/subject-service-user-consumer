@@ -31,7 +31,7 @@ public class UserController{
     @GetMapping(value = "/list")
     public String list(Model model) {
         logger.info("enter request mapping: /user/list");
-        logger.info("test");
+        logger.info("test.......");
         List<TbStudent> tbStudents = tbStudentService.selectAll();
         model.addAttribute("tbStudents", tbStudents);
         for (TbStudent tbStudent : tbStudents) {
