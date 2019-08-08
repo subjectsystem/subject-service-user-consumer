@@ -1,16 +1,23 @@
 package com.miyako.subject.service.user.consumer.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.github.pagehelper.PageInfo;
 import com.miyako.subject.commons.domain.TbCourse;
 import com.miyako.subject.commons.domain.TbStudent;
+import com.miyako.subject.service.redis.api.RedisService;
+import com.miyako.subject.service.redis.key.StudentKey;
 import com.miyako.subject.service.user.api.TbUserService;
+import org.apache.tomcat.util.descriptor.web.MessageDestinationRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 /**
@@ -27,16 +34,48 @@ public class UserController{
 
     @Reference
     private TbUserService tbStudentService;
+    @Reference
+    private RedisService redisService;
+
+    @Value("${page.size}")
+    private Integer pageSize;
+
+    private PageInfo<TbStudent> getPage(Model model, int page, int siez){
+        PageInfo<TbStudent> pageInfo = tbStudentService.page(page, pageSize);
+        logger.info("===>:pageInfo size "+ pageInfo.getSize());
+        model.addAttribute("pageInfo", pageInfo);
+        return pageInfo;
+    }
 
     @GetMapping(value = "/list")
     public String list(Model model) {
         logger.info("enter request mapping: /user/list");
-        logger.info("test.......");
-        List<TbStudent> tbStudents = tbStudentService.selectAll();
-        model.addAttribute("tbStudents", tbStudents);
-        for (TbStudent tbStudent : tbStudents) {
-            System.out.println(tbStudent.getName());
-        }
+        getPage(model, 1, pageSize);
+        //for (TbStudent tbStudent : tbStudents) {
+        //    logger.info(tbStudent.getName());
+        //    // redisService.set(StudentKey.getById,tbStudent.getId().toString(),tbStudent);
+        //}
         return "user/list";
+    }
+
+    @GetMapping(value = "/list/{page}")
+    public String list(Model model, @PathVariable("page") Integer page) {
+        page = page==null?1:page;
+        logger.info("enter request mapping: /user/list/ "+ page);
+        getPage(model, page, pageSize);
+        return "user/list";
+    }
+
+    @GetMapping(value = "/details/{id}")
+    public String details(Model model, @PathVariable("id") Integer id){
+        TbStudent student = redisService.get(StudentKey.getById.getPrefix() + "->" + id, TbStudent.class);
+        if(student ==null){
+            student = tbStudentService.selectById(id);
+            logger.info("database : "+ student.getId());
+        }else{
+            logger.info("redis cache: "+ student.getId());
+        }
+        model.addAttribute("tbStudent", student);
+        return "user/details.html";
     }
 }

@@ -1,0 +1,14 @@
+<!DOCTYPE>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+    <tr><td><span>姓名</span></td><td><span th:text="${tbStudent.getName()}"></span></td></tr>
+    <tr><td><span>性别</span></td><td><span th:text="${tbStudent.getGender()==0}? '男':'女'" /></td></tr>
+    <tr><td><span>年龄</span></td><td><span th:text="${tbStudent.getAge()}"></span></td></tr>
+</table>
+</body>
+</html>

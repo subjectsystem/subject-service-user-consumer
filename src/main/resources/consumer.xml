@@ -13,6 +13,8 @@
 
     <dubbo:annotation package="com.miyako.subject.service.user.api"/>
 
+    <dubbo:annotation package="com.miyako.subject.service.redis.api"/>
+
     <!--用户路由提供-->
     <dubbo:protocol name="dubbo" port="20892"/>
 
