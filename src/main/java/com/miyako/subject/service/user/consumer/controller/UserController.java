@@ -4,6 +4,8 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.miyako.subject.commons.domain.TbCourse;
 import com.miyako.subject.commons.domain.TbStudent;
 import com.miyako.subject.service.user.api.TbUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,12 +23,15 @@ import java.util.List;
 @RequestMapping(value = "/user")
 public class UserController{
 
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Reference
     private TbUserService tbStudentService;
 
     @GetMapping(value = "/list")
     public String list(Model model) {
-        System.out.println("....");
+        logger.info("enter request mapping: /user/list");
+
         List<TbStudent> tbStudents = tbStudentService.selectAll();
         model.addAttribute("tbStudents", tbStudents);
         for (TbStudent tbStudent : tbStudents) {
