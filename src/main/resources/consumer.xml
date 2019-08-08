@@ -7,10 +7,17 @@
        http://dubbo.apache.org/schema/dubbo
        http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
-    <dubbo:application name="subject-service-user-consumer"  />
+    <dubbo:application name="subject-service-user-consumer" />
 
     <dubbo:registry protocol="zookeeper" address="127.0.0.1:2181" />
 
     <dubbo:annotation package="com.miyako.subject.service.user.api"/>
+
+    <!--用户路由提供-->
+    <dubbo:protocol name="dubbo" port="20892"/>
+
+    <bean id="routeUser" class="com.miyako.subject.service.user.consumer.route.RouteUserServiceImpl"/>
+
+    <dubbo:service interface="com.miyako.subject.service.user.api.RouteUserService" ref="routeUser"/>
 
 </beans>
