@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
@@ -40,8 +41,8 @@ public class UserController{
     @Value("${page.size}")
     private Integer pageSize;
 
-    private PageInfo<TbStudent> getPage(Model model, int page, int siez){
-        PageInfo<TbStudent> pageInfo = tbStudentService.page(page, pageSize);
+    private PageInfo<TbStudent> getPage(Model model, int page, int size){
+        PageInfo<TbStudent> pageInfo = tbStudentService.page(page, size);
         logger.info("===>:pageInfo size "+ pageInfo.getSize());
         model.addAttribute("pageInfo", pageInfo);
         return pageInfo;
@@ -61,8 +62,9 @@ public class UserController{
     @GetMapping(value = "/list/{page}")
     public String list(Model model, @PathVariable("page") Integer page) {
         page = page==null?1:page;
-        logger.info("enter request mapping: /user/list/ "+ page);
+        logger.info("enter request mapping: /user/list/"+ page);
         getPage(model, page, pageSize);
+        model.addAttribute("currentIndex",page);
         return "user/list";
     }
 
