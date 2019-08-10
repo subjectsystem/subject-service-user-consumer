@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.github.pagehelper.PageInfo;
 import com.miyako.subject.commons.domain.TbCourse;
 import com.miyako.subject.commons.domain.TbStudent;
+import com.miyako.subject.dubbo.aop.MethodLog;
 import com.miyako.subject.service.redis.api.RedisService;
 import com.miyako.subject.service.redis.key.StudentKey;
 import com.miyako.subject.service.user.api.TbUserService;
@@ -49,6 +50,7 @@ public class UserController{
     }
 
     @GetMapping(value = "/list")
+    @MethodLog(value = "UserController", operationType = "路径访问", operationName = "list")
     public String list(Model model) {
         logger.info("enter request mapping: /user/list");
         getPage(model, 1, pageSize);
@@ -60,6 +62,7 @@ public class UserController{
     }
 
     @GetMapping(value = "/list/{page}")
+    @MethodLog(value = "UserController", operationType = "路径访问", operationName = "list", operationArgs = "分页索引")
     public String list(Model model, @PathVariable("page") Integer page) {
         page = page==null?1:page;
         logger.info("enter request mapping: /user/list/"+ page);
@@ -69,6 +72,7 @@ public class UserController{
     }
 
     @GetMapping(value = "/details/{id}")
+    @MethodLog(value = "UserController", operationType = "路径访问", operationName = "details", operationArgs = "用户id")
     public String details(Model model, @PathVariable("id") Integer id){
         TbStudent student = redisService.get(StudentKey.getById.getPrefix() + "->" + id, TbStudent.class);
         if(student ==null){
